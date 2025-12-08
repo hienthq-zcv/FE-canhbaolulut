@@ -1,8 +1,6 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
-
-// Cấu hình URL Backend
-const API_URL = "http://localhost:8080/api/v1/community";
+import apiClient from "@/lib/api-client";
 
 // --- INTERFACES ---
 interface User {
@@ -122,11 +120,29 @@ export default function CommunityPage() {
 
   const fetchPosts = async () => {
     try {
-      const res = await fetch(API_URL);
-      if (!res.ok) throw new Error("Không thể tải bài viết");
-      const data = await res.json();
-      setPosts(data);
-      setFilteredPosts(data); // Init filtered list
+      const res = await apiClient.get("/community");
+      // Axios response data is in res.data, but sometimes the API wraps data in a 'data' field.
+      // Checking the previous implementation: const data = await res.json();
+      // And setPosts(data). This implies the endpoint returns the array directly or the logic was simple.
+      // Let's assume standard axios usage. If the API returns [Post...], then res.data is [Post...].
+      // If the API returns { success: true, data: [...] }, then res.data.data is the array.
+      // Based on typical patterns in this project (see useAuthStore), it might be wrapped.
+      // However, the original code did `setPosts(data)` directly after json().
+      // Let's look at `app/rescue/page.tsx` or others. `articles/page.tsx` uses `response.data.data`.
+      // But here the previous code was: `const data = await res.json(); setPosts(data);`
+      // This suggests the endpoint might return the list directly OR the variable `data` contained the list.
+      // Let's check `articles/page.tsx` again. It checks `response.data.success`.
+      // If `community` endpoint behaves like others, it likely wraps in `data`.
+      // BUT, the previous code was `const data = await res.json(); setPosts(data);`.
+      // If the API returned `{data: [...]}`, then `posts` would be `{data: [...]}` which would break `map`.
+      // So the API likely returns the array directly OR the previous code was relying on a specific structure.
+      // Let's try to be safe. If `res.data` is an array, use it. If `res.data.data` is an array, use that.
+      
+      const data = res.data;
+      const postsData = Array.isArray(data) ? data : (Array.isArray(data?.data) ? data.data : []);
+      
+      setPosts(postsData);
+      setFilteredPosts(postsData); // Init filtered list
     } catch (error) {
       console.error("Lỗi tải bài viết:", error);
     }
@@ -164,12 +180,13 @@ export default function CommunityPage() {
     }
 
     try {
-      const res = await fetch(API_URL, {
-        method: "POST",
-        body: formData,
+      const res = await apiClient.post("/community", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
 
-      if (res.ok) {
+      if (res.status === 200 || res.status === 201) {
         setContent("");
         setLocationInput(""); // Reset location input
         setSelectedImage(null);
@@ -210,19 +227,13 @@ export default function CommunityPage() {
     }
 
     try {
-        const res = await fetch(`${API_URL}/comment`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                post_id: postId,
-                user_name: currentUser.full_name || "Người dùng",
-                content: text
-            })
+        const res = await apiClient.post("/community/comment", {
+            post_id: postId,
+            user_name: currentUser.full_name || "Người dùng",
+            content: text
         });
 
-        if (res.ok) {
+        if (res.status === 200 || res.status === 201) {
             fetchPosts(); 
             setCommentInputs(prev => ({ ...prev, [postId]: "" }));
         } else {

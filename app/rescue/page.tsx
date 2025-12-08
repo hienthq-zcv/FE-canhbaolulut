@@ -9,9 +9,7 @@ import { FloodMap } from "@/components/map/flood-map"
 import { Phone, MapPin, Clock, Navigation, AlertCircle, RefreshCw, Trash2, CheckCircle, PlayCircle, Loader2 } from "lucide-react"
 import { format } from "date-fns"
 import { useRequireAuth } from "@/hooks/use-require-auth"
-
-// Địa chỉ API Backend (Dùng 127.0.0.1 để tránh lỗi localhost trên Windows)
-const API_URL = "http://127.0.0.1:8080/api/v1/sos";
+import apiClient from "@/lib/api-client"
 
 // Định nghĩa kiểu dữ liệu SOS khớp với Backend
 type SOSRequest = {
@@ -36,10 +34,12 @@ export default function RescueContent() {
   const loadData = async () => {
     setLoading(true)
     try {
-      const res = await fetch(API_URL + "/");
-      if (res.ok) {
-        const data = await res.json();
-        setSosRequests(data);
+      const res = await apiClient.get("/sos");
+      if (res.status === 200) {
+        // Similar check as in community page
+        const data = res.data;
+        const sosData = Array.isArray(data) ? data : (Array.isArray(data?.data) ? data.data : []);
+        setSosRequests(sosData);
       } else {
         console.error("Lỗi khi tải dữ liệu từ server:", res.status);
       }
@@ -70,13 +70,9 @@ export default function RescueContent() {
   // Hàm cập nhật trạng thái (Tiếp nhận / Hoàn thành)
   const updateStatus = async (id: number, newStatus: string) => {
     try {
-      const res = await fetch(`${API_URL}/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: newStatus })
-      });
+      const res = await apiClient.put(`/sos/${id}`, { status: newStatus });
       
-      if(res.ok) {
+      if(res.status === 200) {
         // Cập nhật giao diện ngay lập tức
         setSosRequests(prev => prev.map(item => item.id === id ? {...item, status: newStatus as any} : item));
       } else {
@@ -91,11 +87,9 @@ export default function RescueContent() {
   const deleteRequest = async (id: number) => {
     if (confirm("Bạn có chắc chắn muốn xóa yêu cầu cứu trợ này khỏi Database?")) {
       try {
-        const res = await fetch(`${API_URL}/${id}`, {
-          method: "DELETE",
-        });
+        const res = await apiClient.delete(`/sos/${id}`);
         
-        if (res.ok) {
+        if (res.status === 200) {
           setSosRequests(prev => prev.filter(item => item.id !== id));
         } else {
           alert("Không thể xóa yêu cầu này.");

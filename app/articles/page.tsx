@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input"
 import { BookOpen, Search, Eye, Calendar } from "lucide-react"
 import apiClient from "@/lib/api-client"
 import { Article } from "@/lib/types"
+import { UPLOADS_BASE_URL } from "@/lib/constants"
 import Link from "next/link"
 import { format } from "date-fns"
 
@@ -88,7 +89,7 @@ export default function ArticlesPage() {
                 {article.thumbnail_path && (
                   <div className="relative h-48 w-full overflow-hidden rounded-t-lg">
                     <img
-                      src={`http://localhost:8080${article.thumbnail_path}`}
+                      src={`${UPLOADS_BASE_URL}${article.thumbnail_path}`}
                       alt={article.title}
                       className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
                     />

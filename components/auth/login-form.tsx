@@ -77,7 +77,11 @@ export function LoginForm() {
               id="email"
               type="email"
               placeholder="your@email.com"
-              {...register("email")}
+              {...register("email", {
+                onChange: () => {
+                  if (error) clearError()
+                }
+              })}
               className="h-12 text-base"
             />
             {errors.email && (
@@ -92,7 +96,11 @@ export function LoginForm() {
                 id="password"
                 type={showPassword ? "text" : "password"}
                 placeholder="••••••••"
-                {...register("password")}
+                {...register("password", {
+                  onChange: () => {
+                    if (error) clearError()
+                  }
+                })}
                 className="h-12 text-base pr-10"
               />
               <Button
