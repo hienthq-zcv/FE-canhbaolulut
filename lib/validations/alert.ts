@@ -3,7 +3,7 @@ import { z } from "zod"
 export const createAlertSchema = z.object({
   location_id: z.number().int().positive("ID địa điểm không hợp lệ"),
   level: z.enum(["info", "warning", "danger", "critical"], {
-    errorMap: () => ({ message: "Mức độ cảnh báo không hợp lệ" }),
+    message: "Mức độ cảnh báo không hợp lệ",
   }),
   title: z.string().min(5, "Tiêu đề phải có ít nhất 5 ký tự").max(255, "Tiêu đề quá dài"),
   description: z.string().min(10, "Mô tả phải có ít nhất 10 ký tự"),
