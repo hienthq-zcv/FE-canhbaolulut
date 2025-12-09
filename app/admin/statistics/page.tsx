@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect } from "react"
+import { useTheme } from "next-themes"
 import { useAdminStore } from "@/store/admin-store"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Users, AlertTriangle, MapPin, BookOpen } from "lucide-react"
@@ -8,63 +9,73 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsive
 
 export default function AdminStatisticsPage() {
   const { statistics, fetchStatistics, isLoading } = useAdminStore()
+  const { theme, resolvedTheme } = useTheme()
 
   useEffect(() => {
     fetchStatistics()
   }, [fetchStatistics])
+
+  // Determine current theme (resolvedTheme handles 'system' preference)
+  const currentTheme = resolvedTheme || theme || 'light'
+  const isDark = currentTheme === 'dark'
 
   const stats = [
     {
       title: "Tổng người dùng",
       value: statistics?.total_users || 0,
       icon: Users,
-      color: "text-blue-600",
-      bgColor: "bg-blue-50",
+      color: "text-primary",
+      bgColor: "bg-primary/10 dark:bg-primary/20",
     },
     {
       title: "Tổng cảnh báo",
       value: statistics?.total_alerts || 0,
       icon: AlertTriangle,
-      color: "text-red-600",
-      bgColor: "bg-red-50",
+      color: "text-destructive",
+      bgColor: "bg-destructive/10 dark:bg-destructive/20",
     },
     {
       title: "Tổng địa điểm",
       value: statistics?.total_locations || 0,
       icon: MapPin,
-      color: "text-green-600",
-      bgColor: "bg-green-50",
+      color: "text-success",
+      bgColor: "bg-success/10 dark:bg-success/20",
     },
     {
       title: "Tổng bài viết",
       value: statistics?.total_articles || 0,
       icon: BookOpen,
-      color: "text-purple-600",
-      bgColor: "bg-purple-50",
+      color: "text-warning",
+      bgColor: "bg-warning/10 dark:bg-warning/20",
     },
   ]
+
+  // Theme-aware chart colors
+  const CHART_COLORS = isDark
+    ? ["#60a5fa", "#f87171", "#4ade80", "#fbbf24"] // Lighter colors for dark mode
+    : ["#2563eb", "#dc2626", "#16a34a", "#f59e0b"] // Standard colors for light mode
 
   // Dữ liệu cho biểu đồ cột
   const barChartData = [
     {
       name: "Người dùng",
       value: statistics?.total_users || 0,
-      color: "#2563eb",
+      color: CHART_COLORS[0],
     },
     {
       name: "Cảnh báo",
       value: statistics?.total_alerts || 0,
-      color: "#dc2626",
+      color: CHART_COLORS[1],
     },
     {
       name: "Địa điểm",
       value: statistics?.total_locations || 0,
-      color: "#16a34a",
+      color: CHART_COLORS[2],
     },
     {
       name: "Bài viết",
       value: statistics?.total_articles || 0,
-      color: "#9333ea",
+      color: CHART_COLORS[3],
     },
   ]
 
@@ -75,8 +86,6 @@ export default function AdminStatisticsPage() {
     { name: "Địa điểm", value: statistics?.total_locations || 0 },
     { name: "Bài viết", value: statistics?.total_articles || 0 },
   ].filter((item) => item.value > 0)
-
-  const COLORS = ["#2563eb", "#dc2626", "#16a34a", "#9333ea"]
 
   return (
     <div className="p-4 sm:p-6 lg:p-8">
@@ -126,12 +135,19 @@ export default function AdminStatisticsPage() {
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
                   <BarChart data={barChartData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    <Tooltip />
+                    <CartesianGrid strokeDasharray="3 3" stroke={isDark ? "#374151" : "#e5e7eb"} />
+                    <XAxis dataKey="name" stroke={isDark ? "#9ca3af" : "#6b7280"} />
+                    <YAxis stroke={isDark ? "#9ca3af" : "#6b7280"} />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: isDark ? "#1f2937" : "#ffffff",
+                        border: `1px solid ${isDark ? "#374151" : "#e5e7eb"}`,
+                        borderRadius: "8px",
+                        color: isDark ? "#f3f4f6" : "#111827"
+                      }}
+                    />
                     <Legend />
-                    <Bar dataKey="value" fill="#2563eb" radius={[8, 8, 0, 0]}>
+                    <Bar dataKey="value" fill={CHART_COLORS[0]} radius={[8, 8, 0, 0]}>
                       {barChartData.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={entry.color} />
                       ))}
@@ -159,14 +175,21 @@ export default function AdminStatisticsPage() {
                       labelLine={false}
                       label={({ name, percent }) => `${name}: ${percent ? (percent * 100).toFixed(0) : 0}%`}
                       outerRadius={100}
-                      fill="#8884d8"
+                      fill={CHART_COLORS[0]}
                       dataKey="value"
                     >
                       {pieChartData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
                       ))}
                     </Pie>
-                    <Tooltip />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: isDark ? "#1f2937" : "#ffffff",
+                        border: `1px solid ${isDark ? "#374151" : "#e5e7eb"}`,
+                        borderRadius: "8px",
+                        color: isDark ? "#f3f4f6" : "#111827"
+                      }}
+                    />
                   </PieChart>
                 </ResponsiveContainer>
               </CardContent>

@@ -1,10 +1,36 @@
+"use client"
+
 import Link from "next/link"
+import { useEffect } from "react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { MapPin, Users, BookOpen, Zap, Bell } from "lucide-react"
 import { FloodMap } from "@/components/map/flood-map"
+import { useAuthStore } from "@/store/auth-store"
 
 export default function Home() {
+  const router = useRouter()
+  const { isAuthenticated, user, isHydrated } = useAuthStore()
+
+  useEffect(() => {
+    if (!isHydrated) return
+
+    if (isAuthenticated && user) {
+      // Redirect authenticated users to their appropriate dashboard
+      if (user.role === "admin") {
+        router.push("/admin")
+      } else {
+        router.push("/dashboard")
+      }
+    }
+  }, [isAuthenticated, user, isHydrated, router])
+
+  // Show loading while checking authentication
+  if (!isHydrated || isAuthenticated) {
+    return null
+  }
+
   return (
     <div className="flex flex-col min-h-screen">
       {/* Hero Section - Dark Theme */}

@@ -16,7 +16,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 export default function AlertsPage() {
   const router = useRouter()
-  const { isAuthenticated, isHydrated } = useRequireAuth()
+  const { isAuthenticated, isHydrated, user } = useRequireAuth()
   const { alerts, fetchAlerts, isLoading } = useAlertStore()
   const [searchTerm, setSearchTerm] = useState("")
   const [filterLevel, setFilterLevel] = useState<string>("all")
@@ -25,10 +25,16 @@ export default function AlertsPage() {
     // Đợi hydration xong trước khi check auth
     if (!isHydrated) return
 
+    // Redirect admin to admin area
+    if (user?.role === "admin") {
+      router.push("/admin")
+      return
+    }
+
     if (isAuthenticated) {
       fetchAlerts()
     }
-  }, [isHydrated, isAuthenticated, router, fetchAlerts])
+  }, [isHydrated, isAuthenticated, user, router, fetchAlerts])
 
   const filteredAlerts = alerts.filter((alert) => {
     const matchesSearch =
@@ -39,17 +45,7 @@ export default function AlertsPage() {
     return matchesSearch && matchesLevel
   })
 
-  if (!isHydrated) {
-    return (
-      <div className="container mx-auto px-4 py-8 max-w-7xl">
-        <div className="text-center py-12">
-          <p className="text-muted-foreground">Đang tải...</p>
-        </div>
-      </div>
-    )
-  }
-
-  if (!isAuthenticated) {
+  if (!isHydrated || !isAuthenticated || user?.role === "admin") {
     return null
   }
 

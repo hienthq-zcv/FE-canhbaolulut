@@ -183,7 +183,7 @@ export default function EditAlertPage() {
                   <Input
                     id="water_level"
                     type="number"
-                    step="0.1"
+                    step="0.01"
                     {...register("water_level", { valueAsNumber: true })}
                   />
                 </div>
@@ -193,7 +193,7 @@ export default function EditAlertPage() {
                   <Input
                     id="rainfall"
                     type="number"
-                    step="0.1"
+                    step="0.01"
                     {...register("rainfall", { valueAsNumber: true })}
                   />
                 </div>
@@ -203,7 +203,7 @@ export default function EditAlertPage() {
                   <Input
                     id="wind_speed"
                     type="number"
-                    step="0.1"
+                    step="0.01"
                     {...register("wind_speed", { valueAsNumber: true })}
                   />
                 </div>
@@ -213,7 +213,7 @@ export default function EditAlertPage() {
                   <Input
                     id="temperature"
                     type="number"
-                    step="0.1"
+                    step="0.01"
                     {...register("temperature", { valueAsNumber: true })}
                   />
                 </div>
@@ -225,6 +225,7 @@ export default function EditAlertPage() {
                     type="number"
                     min="0"
                     max="100"
+                    step="0.01"
                     {...register("humidity", { valueAsNumber: true })}
                   />
                 </div>

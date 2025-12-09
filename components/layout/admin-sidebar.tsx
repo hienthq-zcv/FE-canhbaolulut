@@ -11,6 +11,7 @@ import {
   BookOpen,
   BarChart3,
   LifeBuoy,
+  MessageCircle,
 } from "lucide-react"
 
 // Định nghĩa thêm thuộc tính 'variant' để tùy biến style
@@ -41,6 +42,11 @@ const adminMenuItems = [
     icon: BookOpen,
   },
   {
+    title: "Cộng đồng",
+    href: "/admin/community",
+    icon: MessageCircle,
+  },
+  {
     title: "Thống kê",
     href: "/admin/statistics",
     icon: BarChart3,
@@ -48,7 +54,7 @@ const adminMenuItems = [
   // --- [ĐÃ CHUYỂN XUỐNG CUỐI] ---
   {
     title: "Cứu trợ (SOS)",
-    href: "/rescue",
+    href: "/admin/rescue",
     icon: LifeBuoy,
     variant: "destructive", // Đánh dấu là mục đặc biệt
   },

@@ -17,7 +17,7 @@ import { toast } from "@/hooks/use-toast"
 
 export default function ContactsPage() {
   const router = useRouter()
-  const { isAuthenticated, isHydrated } = useRequireAuth()
+  const { isAuthenticated, isHydrated, user } = useRequireAuth()
   const { contacts, fetchContacts, deleteContact, isLoading } = useContactStore()
   const [deletingId, setDeletingId] = useState<number | null>(null)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
@@ -28,10 +28,16 @@ export default function ContactsPage() {
     // Đợi hydration xong trước khi check auth
     if (!isHydrated) return
 
+    // Redirect admin to admin area
+    if (user?.role === "admin") {
+      router.push("/admin")
+      return
+    }
+
     if (isAuthenticated) {
       fetchContacts()
     }
-  }, [isHydrated, isAuthenticated, router, fetchContacts])
+  }, [isHydrated, isAuthenticated, user, router, fetchContacts])
 
   const handleDeleteClick = (id: number) => {
     setSelectedContactId(id)
@@ -59,17 +65,7 @@ export default function ContactsPage() {
     contact.email?.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
-  if (!isHydrated) {
-    return (
-      <div className="container mx-auto px-4 py-8 max-w-7xl">
-        <div className="text-center py-12">
-          <p className="text-muted-foreground">Đang tải...</p>
-        </div>
-      </div>
-    )
-  }
-
-  if (!isAuthenticated) {
+  if (!isHydrated || !isAuthenticated || user?.role === "admin") {
     return null
   }
 

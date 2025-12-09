@@ -1,14 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { FloodMap } from "@/components/map/flood-map";
 import {
   Phone,
-  MapPin,
   Clock,
   Navigation,
   AlertCircle,
@@ -19,7 +17,6 @@ import {
   Loader2,
 } from "lucide-react";
 import { format } from "date-fns";
-import { useRequireAuth } from "@/hooks/use-require-auth";
 import apiClient from "@/lib/api-client";
 
 // Định nghĩa kiểu dữ liệu SOS khớp với Backend
@@ -34,10 +31,7 @@ type SOSRequest = {
   message?: string;
 };
 
-export default function RescueContent() {
-  const router = useRouter();
-  const { user, isAuthenticated, isHydrated } = useRequireAuth();
-
+export default function AdminRescuePage() {
   const [sosRequests, setSosRequests] = useState<SOSRequest[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -47,7 +41,6 @@ export default function RescueContent() {
     try {
       const res = await apiClient.get("/sos");
       if (res.status === 200) {
-        // Similar check as in community page
         const data = res.data;
         const sosData = Array.isArray(data)
           ? data
@@ -65,21 +58,14 @@ export default function RescueContent() {
     }
   };
 
-  // Effect: Kiểm tra quyền và tải dữ liệu
+  // Effect: Tải dữ liệu khi component mount
   useEffect(() => {
-    if (!isHydrated) return;
-
-    if (!isAuthenticated || user?.role !== "admin") {
-      router.push("/");
-      return;
-    }
-
     loadData();
 
     // Tự động làm mới dữ liệu mỗi 15 giây
     const interval = setInterval(loadData, 15000);
     return () => clearInterval(interval);
-  }, [isHydrated, isAuthenticated, user, router]);
+  }, []);
 
   // Hàm cập nhật trạng thái (Tiếp nhận / Hoàn thành)
   const updateStatus = async (id: number, newStatus: string) => {
@@ -123,7 +109,6 @@ export default function RescueContent() {
   // Chuẩn bị dữ liệu cho Bản đồ
   const mapLocations = sosRequests.map((sos) => ({
     id: sos.id.toString(),
-    // Xử lý hiển thị tên trên bản đồ
     name: sos.user_name === "Người dùng (Demo)" ? "Người dân" : sos.user_name,
     latitude: sos.latitude,
     longitude: sos.longitude,
@@ -136,8 +121,6 @@ export default function RescueContent() {
         : "info",
   }));
 
-  if (!isHydrated || !isAuthenticated || user?.role !== "admin") return null;
-
   return (
     <div className="container mx-auto px-4 py-6 max-w-7xl h-full flex flex-col">
       {/* Header trang nội dung */}
@@ -145,7 +128,7 @@ export default function RescueContent() {
         <div>
           <h1 className="text-3xl font-bold text-red-600 flex items-center gap-2">
             <AlertCircle className="h-8 w-8" />
-            Trung tâm Điều phối Cứu hộ (Admin)
+            Trung tâm Điều phối Cứu hộ
           </h1>
           <p className="text-muted-foreground mt-1">
             Quản lý các yêu cầu SOS trực tiếp từ Database hệ thống.
@@ -188,7 +171,6 @@ export default function RescueContent() {
                   }`}
                 >
                   <div className="flex justify-between items-start mb-2">
-                    {/* Xử lý hiển thị tên trong danh sách */}
                     <h3 className="font-bold text-base text-gray-100">
                       {sos.user_name === "Người dùng (Demo)"
                         ? "Người dân"

@@ -101,17 +101,7 @@ export default function LocationsPage() {
     location.district?.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
-  if (!isHydrated) {
-    return (
-      <div className="container mx-auto px-4 py-8 max-w-7xl">
-        <div className="text-center py-12">
-          <p className="text-muted-foreground">Đang tải...</p>
-        </div>
-      </div>
-    )
-  }
-
-  if (!isAuthenticated || user?.role === "admin") {
+  if (!isHydrated || !isAuthenticated || user?.role === "admin") {
     return null
   }
 

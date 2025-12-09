@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { BookOpen, Search, Eye, Calendar } from "lucide-react"
@@ -9,11 +10,23 @@ import { Article } from "@/lib/types"
 import { UPLOADS_BASE_URL } from "@/lib/constants"
 import Link from "next/link"
 import { format } from "date-fns"
+import { useAuthStore } from "@/store/auth-store"
 
 export default function ArticlesPage() {
+  const router = useRouter()
+  const { user, isHydrated } = useAuthStore()
   const [articles, setArticles] = useState<Article[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
+
+  // Redirect admin to admin area
+  useEffect(() => {
+    if (!isHydrated) return
+
+    if (user?.role === "admin") {
+      router.push("/admin")
+    }
+  }, [isHydrated, user, router])
 
   useEffect(() => {
     fetchArticles()
@@ -39,6 +52,11 @@ export default function ArticlesPage() {
       article.summary?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       article.category.toLowerCase().includes(searchTerm.toLowerCase())
   )
+
+  // Don't render if admin user (while redirecting)
+  if (!isHydrated || user?.role === "admin") {
+    return null
+  }
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">
