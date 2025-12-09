@@ -10,26 +10,41 @@ export const createAlertSchema = z.object({
     .min(5, "Tiêu đề phải có ít nhất 5 ký tự")
     .max(255, "Tiêu đề quá dài"),
   description: z.string().min(10, "Mô tả phải có ít nhất 10 ký tự"),
-  water_level: z.preprocess(
-    (val) => (typeof val === "number" && isNaN(val) ? undefined : val),
-    z.number().optional()
-  ),
-  rainfall: z.preprocess(
-    (val) => (typeof val === "number" && isNaN(val) ? undefined : val),
-    z.number().optional()
-  ),
-  wind_speed: z.preprocess(
-    (val) => (typeof val === "number" && isNaN(val) ? undefined : val),
-    z.number().optional()
-  ),
-  temperature: z.preprocess(
-    (val) => (typeof val === "number" && isNaN(val) ? undefined : val),
-    z.number().optional()
-  ),
-  humidity: z.preprocess(
-    (val) => (typeof val === "number" && isNaN(val) ? undefined : val),
-    z.number().min(0).max(100).optional()
-  ),
+  water_level: z
+    .union([z.number(), z.nan()])
+    .optional()
+    .transform((val) =>
+      typeof val === "number" && isNaN(val) ? undefined : val
+    )
+    .optional(),
+  rainfall: z
+    .union([z.number(), z.nan()])
+    .optional()
+    .transform((val) =>
+      typeof val === "number" && isNaN(val) ? undefined : val
+    )
+    .optional(),
+  wind_speed: z
+    .union([z.number(), z.nan()])
+    .optional()
+    .transform((val) =>
+      typeof val === "number" && isNaN(val) ? undefined : val
+    )
+    .optional(),
+  temperature: z
+    .union([z.number(), z.nan()])
+    .optional()
+    .transform((val) =>
+      typeof val === "number" && isNaN(val) ? undefined : val
+    )
+    .optional(),
+  humidity: z
+    .union([z.number(), z.nan()])
+    .optional()
+    .transform((val) =>
+      typeof val === "number" && isNaN(val) ? undefined : val
+    )
+    .pipe(z.number().min(0).max(100).optional()),
   forecast: z.string().optional(),
   safety_instructions: z.string().optional(),
 });
