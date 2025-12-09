@@ -86,7 +86,7 @@ export default function DashboardPage() {
             message: `SOS khẩn cấp từ ${user?.full_name || "Người dùng"}!`,
           });
 
-          if (!response.data.success) {
+          if (response.status !== 200) {
             throw new Error(
               response.data.message || "Không thể kết nối đến máy chủ."
             );
@@ -98,11 +98,13 @@ export default function DashboardPage() {
           alert(
             `✅ ĐÃ GỬI SOS THÀNH CÔNG!\n\nTọa độ: ${latitude}, ${longitude}\nHệ thống đã ghi nhận và thông báo cho quản trị viên.`
           );
-        } catch (error) {
+        } catch (error: any) {
           console.error("Lỗi:", error);
-          alert(
-            "❌ Lỗi: Không thể gửi tín hiệu SOS. Vui lòng kiểm tra kết nối mạng!"
-          );
+          const errorMessage =
+            error?.response?.data?.message ||
+            error?.message ||
+            "Không thể gửi tín hiệu SOS. Vui lòng kiểm tra kết nối mạng!";
+          alert(`❌ Lỗi: ${errorMessage}`);
         } finally {
           setIsSOSLoading(false);
         }
