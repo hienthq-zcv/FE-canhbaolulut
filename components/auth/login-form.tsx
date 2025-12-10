@@ -72,20 +72,20 @@ export function LoginForm() {
           )}
 
           <div className="space-y-2">
-            <Label htmlFor="email" className="text-base font-medium">Email</Label>
+            <Label htmlFor="phone" className="text-base font-medium">Số điện thoại</Label>
             <Input
-              id="email"
-              type="email"
-              placeholder="your@email.com"
-              {...register("email", {
+              id="phone"
+              type="tel"
+              placeholder="0901234567"
+              {...register("phone", {
                 onChange: () => {
                   if (error) clearError()
                 }
               })}
               className="h-12 text-base"
             />
-            {errors.email && (
-              <p className="text-sm text-destructive">{errors.email.message}</p>
+            {errors.phone && (
+              <p className="text-sm text-destructive">{errors.phone.message}</p>
             )}
           </div>
 

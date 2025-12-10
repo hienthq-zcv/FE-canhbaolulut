@@ -209,7 +209,7 @@ export default function ProfilePage() {
               </div>
             </div>
             <CardTitle className="text-xl">{profile.full_name}</CardTitle>
-            <CardDescription>{profile.email}</CardDescription>
+            <CardDescription>{profile.phone}</CardDescription>
             {profile.role === "admin" && (
               <Badge className="mt-2 bg-purple-500">
                 <Shield className="mr-1 h-3 w-3" />
@@ -230,23 +230,6 @@ export default function ProfilePage() {
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <div className="flex items-center gap-3 rounded-lg border bg-muted px-3 py-2">
-                  <Mail className="h-5 w-5 text-muted-foreground" />
-                  <Input
-                    id="email"
-                    type="email"
-                    value={profile.email}
-                    disabled
-                    className="border-0 bg-transparent p-0 focus-visible:ring-0"
-                  />
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Email không thể thay đổi
-                </p>
-              </div>
-
-              <div className="space-y-2">
                 <Label htmlFor="full_name">Họ tên *</Label>
                 <div className="flex items-center gap-3 rounded-lg border px-3 py-2 focus-within:ring-2 focus-within:ring-primary">
                   <User className="h-5 w-5 text-muted-foreground" />
@@ -263,16 +246,17 @@ export default function ProfilePage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="phone">Số điện thoại</Label>
+                <Label htmlFor="phone">Số điện thoại *</Label>
                 <div className="flex items-center gap-3 rounded-lg border px-3 py-2 focus-within:ring-2 focus-within:ring-primary">
                   <Phone className="h-5 w-5 text-muted-foreground" />
                   <Input
                     id="phone"
                     type="tel"
-                    value={profile.phone || ""}
+                    value={profile.phone}
                     onChange={(e) =>
                       setProfile({ ...profile, phone: e.target.value })
                     }
+                    required
                     className="border-0 p-0 focus-visible:ring-0"
                   />
                 </div>

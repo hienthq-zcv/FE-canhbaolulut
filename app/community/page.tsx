@@ -8,7 +8,7 @@ import { useAuthStore } from "@/store/auth-store";
 interface User {
   id: string;
   full_name: string;
-  email: string;
+  phone: string;
   role?: string;
 }
 
@@ -271,7 +271,7 @@ export default function CommunityPage() {
     const formData = new FormData();
     formData.append(
       "user_name",
-      currentUser.full_name || currentUser.email || "Người dùng ẩn danh"
+      currentUser.full_name || "Người dùng ẩn danh"
     );
     formData.append("content", content);
 

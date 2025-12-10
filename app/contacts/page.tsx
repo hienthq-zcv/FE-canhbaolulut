@@ -1,79 +1,100 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
-import { useAuthStore } from "@/store/auth-store"
-import { useRequireAuth } from "@/hooks/use-require-auth"
-import { useContactStore } from "@/store/contact-store"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
-import { Plus, Phone, Mail, User, Trash2, Edit, Search, AlertCircle } from "lucide-react"
-import { Contact } from "@/lib/types"
-import Link from "next/link"
-import { ConfirmDialog } from "@/components/ui/confirm-dialog"
-import { toast } from "@/hooks/use-toast"
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/store/auth-store";
+import { useRequireAuth } from "@/hooks/use-require-auth";
+import { useContactStore } from "@/store/contact-store";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import {
+  Plus,
+  Phone,
+  Mail,
+  User,
+  Trash2,
+  Edit,
+  Search,
+  AlertCircle,
+} from "lucide-react";
+import { Contact } from "@/lib/types";
+import Link from "next/link";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { toast } from "@/hooks/use-toast";
 
 export default function ContactsPage() {
-  const router = useRouter()
-  const { isAuthenticated, isHydrated, user } = useRequireAuth()
-  const { contacts, fetchContacts, deleteContact, isLoading } = useContactStore()
-  const [deletingId, setDeletingId] = useState<number | null>(null)
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
-  const [selectedContactId, setSelectedContactId] = useState<number | null>(null)
-  const [searchTerm, setSearchTerm] = useState("")
+  const router = useRouter();
+  const { isAuthenticated, isHydrated, user } = useRequireAuth();
+  const { contacts, fetchContacts, deleteContact, isLoading } =
+    useContactStore();
+  const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [selectedContactId, setSelectedContactId] = useState<number | null>(
+    null
+  );
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     // Đợi hydration xong trước khi check auth
-    if (!isHydrated) return
+    if (!isHydrated) return;
 
     // Redirect admin to admin area
     if (user?.role === "admin") {
-      router.push("/admin")
-      return
+      router.push("/admin");
+      return;
     }
 
     if (isAuthenticated) {
-      fetchContacts()
+      fetchContacts();
     }
-  }, [isHydrated, isAuthenticated, user, router, fetchContacts])
+  }, [isHydrated, isAuthenticated, user, router, fetchContacts]);
 
   const handleDeleteClick = (id: number) => {
-    setSelectedContactId(id)
-    setDeleteDialogOpen(true)
-  }
+    setSelectedContactId(id);
+    setDeleteDialogOpen(true);
+  };
 
   const handleDelete = async () => {
-    if (!selectedContactId) return
-    setDeletingId(selectedContactId)
+    if (!selectedContactId) return;
+    setDeletingId(selectedContactId);
     try {
-      await deleteContact(selectedContactId)
-      toast.success("Xóa liên hệ thành công")
+      await deleteContact(selectedContactId);
+      toast.success("Xóa liên hệ thành công");
     } catch (error: any) {
-      toast.error(error?.response?.data?.message || "Xóa liên hệ thất bại")
+      toast.error(error?.response?.data?.message || "Xóa liên hệ thất bại");
     } finally {
-      setDeletingId(null)
-      setDeleteDialogOpen(false)
-      setSelectedContactId(null)
+      setDeletingId(null);
+      setDeleteDialogOpen(false);
+      setSelectedContactId(null);
     }
-  }
+  };
 
-  const filteredContacts = contacts.filter((contact) =>
-    contact.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    contact.phone.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    contact.email?.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  const filteredContacts = contacts.filter(
+    (contact) =>
+      contact.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      contact.phone.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      contact.email?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   if (!isHydrated || !isAuthenticated || user?.role === "admin") {
-    return null
+    return null;
   }
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">
       <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="mb-2 text-3xl font-bold">Người thân / Liên hệ khẩn cấp</h1>
+          <h1 className="mb-2 text-3xl font-bold">
+            Người thân / Liên hệ khẩn cấp
+          </h1>
           <p className="text-muted-foreground text-lg">
             Quản lý danh sách người thân để nhận thông báo khi có cảnh báo
           </p>
@@ -115,7 +136,9 @@ export default function ContactsPage() {
             </p>
             {!searchTerm && (
               <>
-                <p className="mb-4 text-muted-foreground">Thêm người thân để nhận thông báo khẩn cấp</p>
+                <p className="mb-4 text-muted-foreground">
+                  Thêm người thân để nhận thông báo khẩn cấp
+                </p>
                 <Link href="/contacts/new">
                   <Button className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800">
                     <Plus className="mr-2 h-4 w-4" />
@@ -146,15 +169,22 @@ export default function ContactsPage() {
                         </div>
                       )}
                       <div className="flex-1">
-                        <CardTitle className="line-clamp-1">{contact.full_name}</CardTitle>
+                        <CardTitle className="line-clamp-1">
+                          {contact.full_name}
+                        </CardTitle>
                         {contact.relationship && (
-                          <CardDescription>{contact.relationship}</CardDescription>
+                          <CardDescription>
+                            {contact.relationship}
+                          </CardDescription>
                         )}
                       </div>
                     </div>
                   </div>
-                  {contact.is_emergency && (
-                    <Badge variant="destructive" className="flex items-center gap-1">
+                  {!!contact.is_emergency && (
+                    <Badge
+                      variant="destructive"
+                      className="flex items-center gap-1"
+                    >
                       <AlertCircle className="h-3 w-3" />
                       Khẩn cấp
                     </Badge>
@@ -188,7 +218,9 @@ export default function ContactsPage() {
                       variant="outline"
                       size="sm"
                       className="flex-1"
-                      onClick={() => router.push(`/contacts/${contact.id}/edit`)}
+                      onClick={() =>
+                        router.push(`/contacts/${contact.id}/edit`)
+                      }
                     >
                       <Edit className="mr-1 h-4 w-4" />
                       Sửa
@@ -220,5 +252,5 @@ export default function ContactsPage() {
         cancelText="Hủy"
       />
     </div>
-  )
+  );
 }

@@ -112,11 +112,10 @@ export default function AdminUsersPage() {
                   <tr className="border-b">
                     <th className="text-left p-2 sm:p-4 text-xs sm:text-sm">ID</th>
                     <th className="text-left p-2 sm:p-4 text-xs sm:text-sm">Họ tên</th>
-                    <th className="text-left p-2 sm:p-4 text-xs sm:text-sm hidden md:table-cell">Email</th>
-                    <th className="text-left p-2 sm:p-4 text-xs sm:text-sm hidden lg:table-cell">Số điện thoại</th>
+                    <th className="text-left p-2 sm:p-4 text-xs sm:text-sm hidden md:table-cell">Số điện thoại</th>
                     <th className="text-left p-2 sm:p-4 text-xs sm:text-sm">Vai trò</th>
                     <th className="text-left p-2 sm:p-4 text-xs sm:text-sm">Trạng thái</th>
-                    <th className="text-left p-2 sm:p-4 text-xs sm:text-sm hidden md:table-cell">Ngày tạo</th>
+                    <th className="text-left p-2 sm:p-4 text-xs sm:text-sm hidden lg:table-cell">Ngày tạo</th>
                     <th className="text-left p-2 sm:p-4 text-xs sm:text-sm">Thao tác</th>
                   </tr>
                 </thead>
@@ -125,8 +124,7 @@ export default function AdminUsersPage() {
                     <tr key={user.id} className="border-b">
                       <td className="p-2 sm:p-4 text-xs sm:text-sm">{user.id}</td>
                       <td className="p-2 sm:p-4 text-xs sm:text-sm font-medium">{user.full_name}</td>
-                      <td className="p-2 sm:p-4 text-xs sm:text-sm hidden md:table-cell">{user.email}</td>
-                      <td className="p-2 sm:p-4 text-xs sm:text-sm hidden lg:table-cell">{user.phone || "-"}</td>
+                      <td className="p-2 sm:p-4 text-xs sm:text-sm hidden md:table-cell">{user.phone}</td>
                       <td className="p-2 sm:p-4">
                         <Badge variant={user.role === "admin" ? "default" : "secondary"} className="text-xs">
                           {user.role === "admin" ? "Admin" : "User"}
@@ -137,7 +135,7 @@ export default function AdminUsersPage() {
                           {user.is_active ? "Hoạt động" : "Khóa"}
                         </Badge>
                       </td>
-                      <td className="p-2 sm:p-4 text-xs sm:text-sm text-muted-foreground hidden md:table-cell">
+                      <td className="p-2 sm:p-4 text-xs sm:text-sm text-muted-foreground hidden lg:table-cell">
                         {format(new Date(user.created_at), "dd/MM/yyyy")}
                       </td>
                       <td className="p-2 sm:p-4">
@@ -238,7 +236,7 @@ export default function AdminUsersPage() {
                 )}
                 <div className="text-center sm:text-left">
                   <h3 className="text-xl sm:text-2xl font-bold">{selectedUser.full_name}</h3>
-                  <p className="text-sm sm:text-base text-muted-foreground">{selectedUser.email}</p>
+                  <p className="text-sm sm:text-base text-muted-foreground">{selectedUser.phone}</p>
                   <div className="flex gap-2 mt-2 justify-center sm:justify-start">
                     <Badge variant={selectedUser.role === "admin" ? "default" : "secondary"}>
                       {selectedUser.role === "admin" ? "Admin" : "User"}
@@ -256,12 +254,8 @@ export default function AdminUsersPage() {
                   <p className="text-lg">{selectedUser.id}</p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">Email</label>
-                  <p className="text-lg">{selectedUser.email}</p>
-                </div>
-                <div>
                   <label className="text-sm font-medium text-muted-foreground">Số điện thoại</label>
-                  <p className="text-lg">{selectedUser.phone || "-"}</p>
+                  <p className="text-lg">{selectedUser.phone}</p>
                 </div>
                 <div>
                   <label className="text-sm font-medium text-muted-foreground">Địa chỉ</label>
