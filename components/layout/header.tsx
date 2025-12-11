@@ -92,7 +92,7 @@ export function Header() {
                     "px-5 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 flex items-center gap-2",
                     pathname?.startsWith("/admin")
                       ? "bg-gradient-to-r from-purple-600 to-purple-700 dark:from-purple-500 dark:to-purple-600 text-white shadow-md shadow-purple-500/30 dark:shadow-purple-500/50"
-                      : "text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 hover:bg-gray-100 dark:hover:bg-gray-800"
+                      : "text-muted-foreground hover:text-purple-600 dark:hover:text-purple-400 hover:bg-muted"
                   )}
                 >
                   <Shield className="h-4 w-4" />
@@ -104,7 +104,7 @@ export function Header() {
 
           {/* Right side actions */}
           <div className="flex items-center gap-2 sm:gap-3">
-            <ThemeToggle />
+            
             {isAuthenticated ? (
               <>
                 <Link href="/notifications">
@@ -140,6 +140,10 @@ export function Header() {
                         <p className="text-xs leading-none text-muted-foreground">{user?.phone}</p>
                       </div>
                     </DropdownMenuLabel>
+                    <DropdownMenuItem className="flex items-center justify-between">
+                      <span>Giao diện</span>
+                      <ThemeToggle />
+                    </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={() => router.push("/profile")} className="cursor-pointer">
                       <User className="mr-2 h-4 w-4" />
@@ -214,7 +218,7 @@ export function Header() {
                     "px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 flex items-center gap-2",
                     pathname?.startsWith("/admin")
                       ? "bg-gradient-to-r from-purple-600 to-purple-700 dark:from-purple-500 dark:to-purple-600 text-white shadow-md"
-                      : "text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 hover:bg-gray-100 dark:hover:bg-gray-800"
+                      : "text-muted-foreground hover:text-purple-600 dark:hover:text-purple-400 hover:bg-muted"
                   )}
                 >
                   <Shield className="h-4 w-4" />
