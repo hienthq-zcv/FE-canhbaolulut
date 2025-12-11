@@ -146,7 +146,7 @@ export default function AdminRescuePage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1 min-h-0 overflow-hidden">
         {/* Cột trái: Danh sách SOS */}
-        <Card className="lg:col-span-1 flex flex-col h-full overflow-hidden border-red-200 dark:border-red-800 shadow-lg bg-card">
+        <Card className="lg:col-span-1 flex flex-col h-full overflow-hidden border-red-200 dark:border-red-800 shadow-lg bg-card max-h-[75vh]">
           <CardHeader className="bg-red-50 dark:bg-red-950/30 py-4 border-b shrink-0">
             <CardTitle className="text-lg text-red-600 dark:text-red-400">
               Danh sách SOS ({sosRequests.length})
@@ -266,7 +266,7 @@ export default function AdminRescuePage() {
 
           {/* Chú thích màu sắc */}
           <div className="absolute bottom-4 right-4 bg-white/95 dark:bg-black/90 p-3 rounded-lg shadow-xl text-xs z-[1000] border border-gray-200 dark:border-gray-700">
-<div className="flex items-center gap-2 mb-1 text-muted-foreground">
+            <div className="flex items-center gap-2 mb-1 text-muted-foreground">
               <span className="w-3 h-3 rounded-full bg-red-500 block animate-pulse"></span>{" "}
               Khẩn cấp (Chờ)
             </div>
