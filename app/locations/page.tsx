@@ -1,21 +1,27 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
-import { useAuthStore } from "@/store/auth-store"
-import { useRequireAuth } from "@/hooks/use-require-auth"
-import { useLocationStore } from "@/store/location-store"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { MapPin, Plus, Check, Search, X } from "lucide-react"
-import { Location } from "@/lib/types"
-import { Input } from "@/components/ui/input"
-import Link from "next/link"
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/store/auth-store";
+import { useRequireAuth } from "@/hooks/use-require-auth";
+import { useLocationStore } from "@/store/location-store";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { MapPin, Plus, Check, Search, X } from "lucide-react";
+import { Location } from "@/lib/types";
+import { Input } from "@/components/ui/input";
+import Link from "next/link";
 
 export default function LocationsPage() {
-  const router = useRouter()
-  const { isAuthenticated, user, isHydrated } = useRequireAuth()
+  const router = useRouter();
+  const { isAuthenticated, user, isHydrated } = useRequireAuth();
   const {
     locations,
     userLocations,
@@ -24,85 +30,97 @@ export default function LocationsPage() {
     subscribeLocation,
     unsubscribeLocation,
     isLoading,
-  } = useLocationStore()
-  const [subscribingId, setSubscribingId] = useState<number | null>(null)
-  const [unsubscribingId, setUnsubscribingId] = useState<number | null>(null)
-  const [searchTerm, setSearchTerm] = useState("")
+  } = useLocationStore();
+  const [subscribingId, setSubscribingId] = useState<number | null>(null);
+  const [unsubscribingId, setUnsubscribingId] = useState<number | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     // Đợi hydration xong trước khi check auth
-    if (!isHydrated) return
+    if (!isHydrated) return;
 
     // Redirect admin đến trang admin
     if (user?.role === "admin") {
-      router.push("/admin")
-      return
+      router.push("/admin");
+      return;
     }
 
     if (isAuthenticated) {
-      fetchLocations()
-      fetchUserLocations()
+      fetchLocations();
+      fetchUserLocations();
     }
-  }, [isHydrated, isAuthenticated, user, router, fetchLocations, fetchUserLocations])
+  }, [
+    isHydrated,
+    isAuthenticated,
+    user,
+    router,
+    fetchLocations,
+    fetchUserLocations,
+  ]);
 
   const handleSubscribe = async (locationId: number) => {
-    if (subscribingId === locationId) return // Prevent double click
-    
-    setSubscribingId(locationId)
+    if (subscribingId === locationId) return; // Prevent double click
+
+    setSubscribingId(locationId);
     try {
-      await subscribeLocation(locationId, 1)
+      await subscribeLocation(locationId, 1);
       // Refresh để đảm bảo state đúng
-      await fetchUserLocations()
+      await fetchUserLocations();
     } catch (error: any) {
-      console.error("Subscribe error:", error)
+      console.error("Subscribe error:", error);
       // Error handled in store, nhưng vẫn refresh để đảm bảo state đúng
-      await fetchUserLocations()
+      await fetchUserLocations();
     } finally {
-      setSubscribingId(null)
+      setSubscribingId(null);
     }
-  }
+  };
 
   const handleUnsubscribe = async (locationId: number) => {
-    if (unsubscribingId === locationId) return // Prevent double click
-    
+    if (unsubscribingId === locationId) return; // Prevent double click
+
     // Tìm userLocationId từ userLocations
-    const userLocation = userLocations.find((ul) => ul.location_id === locationId)
+    const userLocation = userLocations.find(
+      (ul) => ul.location_id === locationId
+    );
     if (!userLocation) {
-      console.warn("UserLocation not found for locationId:", locationId)
-      return
+      console.warn("UserLocation not found for locationId:", locationId);
+      return;
     }
 
-    setUnsubscribingId(locationId)
+    setUnsubscribingId(locationId);
     try {
-      await unsubscribeLocation(userLocation.id)
+      await unsubscribeLocation(userLocation.id);
       // Refresh để đảm bảo state đúng
-      await fetchUserLocations()
+      await fetchUserLocations();
     } catch (error: any) {
-      console.error("Unsubscribe error:", error)
+      console.error("Unsubscribe error:", error);
       // Error handled in store, nhưng vẫn refresh để đảm bảo state đúng
-      await fetchUserLocations()
+      await fetchUserLocations();
     } finally {
-      setUnsubscribingId(null)
+      setUnsubscribingId(null);
     }
-  }
+  };
 
   const isSubscribed = (locationId: number) => {
-    return userLocations.some((ul) => ul.location_id === locationId)
-  }
+    return userLocations.some((ul) => ul.location_id === locationId);
+  };
 
   const getUserLocationId = (locationId: number) => {
-    const userLocation = userLocations.find((ul) => ul.location_id === locationId)
-    return userLocation?.id
-  }
+    const userLocation = userLocations.find(
+      (ul) => ul.location_id === locationId
+    );
+    return userLocation?.id;
+  };
 
-  const filteredLocations = locations.filter((location) =>
-    location.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    location.province.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    location.district?.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  const filteredLocations = locations.filter(
+    (location) =>
+      location.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      location.province.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      location.district?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   if (!isHydrated || !isAuthenticated || user?.role === "admin") {
-    return null
+    return null;
   }
 
   return (
@@ -139,20 +157,25 @@ export default function LocationsPage() {
           <CardContent className="py-12 text-center">
             <MapPin className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
             <p className="text-muted-foreground">
-              {searchTerm ? "Không tìm thấy địa điểm nào" : "Chưa có địa điểm nào"}
+              {searchTerm
+                ? "Không tìm thấy địa điểm nào"
+                : "Chưa có địa điểm nào"}
             </p>
           </CardContent>
         </Card>
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {filteredLocations.map((location) => {
-            const subscribed = isSubscribed(location.id)
+            const subscribed = isSubscribed(location.id);
             return (
               <Card key={location.id} className="card-hover border-2">
                 <CardHeader>
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
-                      <Link href={`/locations/${location.id}`} className="block">
+                      <Link
+                        href={`/locations/${location.id}`}
+                        className="block"
+                      >
                         <div className="mb-2 flex items-center gap-2">
                           <MapPin className="h-5 w-5 text-blue-500" />
                           <CardTitle className="line-clamp-1 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
@@ -167,7 +190,9 @@ export default function LocationsPage() {
                           {location.ward && `, ${location.ward}`}
                         </div>
                         {location.description && (
-                          <p className="mt-2 line-clamp-2">{location.description}</p>
+                          <p className="mt-2 line-clamp-2">
+                            {location.description}
+                          </p>
                         )}
                       </CardDescription>
                     </div>
@@ -176,7 +201,9 @@ export default function LocationsPage() {
                 <CardContent>
                   <div className="space-y-3">
                     <div className="text-sm text-muted-foreground">
-                      <span className="font-medium">Tọa độ:</span> {location.latitude.toFixed(4)}, {location.longitude.toFixed(4)}
+                      <span className="font-medium">Tọa độ:</span>{" "}
+                      {location.latitude.toFixed(4)},{" "}
+                      {location.longitude.toFixed(4)}
                     </div>
                     <div className="flex items-center justify-between">
                       {subscribed ? (
@@ -201,13 +228,13 @@ export default function LocationsPage() {
                           size="sm"
                           onClick={() => handleSubscribe(location.id)}
                           disabled={subscribingId === location.id}
-                          className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800"
+                          className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white"
                         >
                           {subscribingId === location.id ? (
                             "Đang thêm..."
                           ) : (
                             <>
-                              <Plus className="mr-1 h-4 w-4" />
+                              <Plus className="mr-1 h-4 w-4 " />
                               Theo dõi
                             </>
                           )}
@@ -217,10 +244,10 @@ export default function LocationsPage() {
                   </div>
                 </CardContent>
               </Card>
-            )
+            );
           })}
         </div>
       )}
     </div>
-  )
+  );
 }

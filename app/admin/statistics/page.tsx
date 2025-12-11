@@ -32,7 +32,7 @@ export default function AdminStatisticsPage() {
       value: statistics?.total_alerts || 0,
       icon: AlertTriangle,
       color: "text-destructive",
-      bgColor: "bg-destructive/10 dark:bg-destructive/20",
+      bgColor: "bg-red-500/10 dark:bg-red-500/20",
     },
     {
       title: "Tổng địa điểm",

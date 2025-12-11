@@ -107,7 +107,7 @@ export default function AdminLocationsPage() {
                     size="sm"
                     onClick={() => handleDeleteClick(location.id)}
                     disabled={deletingId === location.id}
-                    className="bg-red-600 hover:bg-red-700 text-white"
+                    className="bg-red-500 text-destructive-foreground hover:bg-red-500/90"
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>

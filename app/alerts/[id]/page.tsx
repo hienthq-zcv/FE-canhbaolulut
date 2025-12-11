@@ -258,7 +258,7 @@ export default function AlertDetailPage() {
                       </div>
                       <a
                         href={`tel:${contact.phone}`}
-                        className="rounded-md bg-red-500 px-4 py-2 text-sm font-semibold text-white hover:bg-red-600 transition-colors"
+                        className="rounded-md bg-red-500 px-4 py-2 text-sm font-semibold text-destructive-foreground hover:bg-red-500/90 transition-colors"
                       >
                         Gọi
                       </a>

@@ -1,170 +1,188 @@
-"use client"
+"use client";
 
-import { useEffect, useCallback, useRef } from "react"
-import { useRouter } from "next/navigation"
-import { useAuthStore } from "@/store/auth-store"
-import { useRequireAuth } from "@/hooks/use-require-auth"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { User, Mail, Phone, MapPin, Camera, Shield } from "lucide-react"
-import { Badge } from "@/components/ui/badge"
-import apiClient from "@/lib/api-client"
-import { User as UserType } from "@/lib/types"
-import { useState } from "react"
-import { toast } from "@/hooks/use-toast"
+import { useEffect, useCallback, useRef } from "react";
+import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/store/auth-store";
+import { useRequireAuth } from "@/hooks/use-require-auth";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { User, Mail, Phone, MapPin, Camera, Shield } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import apiClient from "@/lib/api-client";
+import { User as UserType } from "@/lib/types";
+import { useState } from "react";
+import { toast } from "@/hooks/use-toast";
 
 export default function ProfilePage() {
-  const router = useRouter()
-  const { user, isAuthenticated, isHydrated } = useRequireAuth()
-  const { updateUser } = useAuthStore()
-  const [profile, setProfile] = useState<UserType | null>(null)
-  const [isLoading, setIsLoading] = useState(false)
-  const [isSaving, setIsSaving] = useState(false)
-  const [avatarPreview, setAvatarPreview] = useState<string | null>(null)
-  const hasFetched = useRef(false) // Track if we've already fetched
+  const router = useRouter();
+  const { user, isAuthenticated, isHydrated } = useRequireAuth();
+  const { updateUser } = useAuthStore();
+  const [profile, setProfile] = useState<UserType | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const hasFetched = useRef(false); // Track if we've already fetched
 
   const fetchProfile = useCallback(async () => {
-    if (isLoading || hasFetched.current) return // Prevent concurrent calls and multiple fetches
-    
-    setIsLoading(true)
-    hasFetched.current = true
+    if (isLoading || hasFetched.current) return; // Prevent concurrent calls and multiple fetches
+
+    setIsLoading(true);
+    hasFetched.current = true;
     try {
-      const response = await apiClient.get("/user/profile")
+      const response = await apiClient.get("/user/profile");
       if (response.data.success && response.data.data) {
-        const profileData = response.data.data
-        setProfile(profileData)
+        const profileData = response.data.data;
+        setProfile(profileData);
         // Cập nhật user trong store
-        updateUser(profileData)
+        updateUser(profileData);
         // Set avatar preview
         if (profileData.avatar_url) {
-          setAvatarPreview(profileData.avatar_url)
+          setAvatarPreview(profileData.avatar_url);
         } else {
-          setAvatarPreview(null)
+          setAvatarPreview(null);
         }
       }
     } catch (error: any) {
-      console.error("Failed to fetch profile:", error)
-      toast.error(error?.response?.data?.message || "Không thể tải thông tin profile")
-      hasFetched.current = false // Reset on error so we can retry
+      console.error("Failed to fetch profile:", error);
+      toast.error(
+        error?.response?.data?.message || "Không thể tải thông tin profile"
+      );
+      hasFetched.current = false; // Reset on error so we can retry
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }, [isLoading, updateUser])
+  }, [isLoading, updateUser]);
 
   useEffect(() => {
     // Đợi hydration xong trước khi check auth
-    if (!isHydrated) return
+    if (!isHydrated) return;
 
     // Redirect admin đến trang admin
     if (user?.role === "admin") {
-      router.push("/admin")
-      return
+      router.push("/admin");
+      return;
     }
 
     // Chỉ fetch một lần khi mount và authenticated
     if (isAuthenticated && !hasFetched.current && !profile) {
-      fetchProfile()
+      fetchProfile();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isHydrated, isAuthenticated, user?.role])
+  }, [isHydrated, isAuthenticated, user?.role]);
 
   const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
+    const file = e.target.files?.[0];
+    if (!file) return;
 
     // Hiển thị preview ngay
-    const reader = new FileReader()
+    const reader = new FileReader();
     reader.onloadend = () => {
-      setAvatarPreview(reader.result as string)
-    }
-    reader.readAsDataURL(file)
+      setAvatarPreview(reader.result as string);
+    };
+    reader.readAsDataURL(file);
 
     // Tự động upload avatar
-    setIsSaving(true)
+    setIsSaving(true);
     try {
-      const formData = new FormData()
-      formData.append("avatar", file)
+      const formData = new FormData();
+      formData.append("avatar", file);
       // Gửi kèm các field khác để không mất dữ liệu
       if (profile) {
-        if (profile.full_name) formData.append("full_name", profile.full_name)
-        if (profile.phone) formData.append("phone", profile.phone)
-        if (profile.address) formData.append("address", profile.address)
+        if (profile.full_name) formData.append("full_name", profile.full_name);
+        if (profile.phone) formData.append("phone", profile.phone);
+        if (profile.address) formData.append("address", profile.address);
       }
 
       const response = await apiClient.put("/user/profile", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
-      })
+      });
 
       if (response.data.success && response.data.data) {
-        const updatedProfile = response.data.data
-        updateUser(updatedProfile)
-        setProfile(updatedProfile)
+        const updatedProfile = response.data.data;
+        updateUser(updatedProfile);
+        setProfile(updatedProfile);
         if (updatedProfile.avatar_url) {
-          setAvatarPreview(updatedProfile.avatar_url)
+          setAvatarPreview(updatedProfile.avatar_url);
         }
         // Reset file input
-        e.target.value = ""
+        e.target.value = "";
       }
     } catch (error: any) {
-      console.error("Failed to upload avatar:", error)
-      toast.error(error?.response?.data?.message || "Không thể cập nhật avatar")
+      console.error("Failed to upload avatar:", error);
+      toast.error(
+        error?.response?.data?.message || "Không thể cập nhật avatar"
+      );
       // Revert preview nếu lỗi
       if (profile?.avatar_url) {
-        setAvatarPreview(profile.avatar_url)
+        setAvatarPreview(profile.avatar_url);
       } else {
-        setAvatarPreview(null)
+        setAvatarPreview(null);
       }
     } finally {
-      setIsSaving(false)
+      setIsSaving(false);
     }
-  }
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    if (!profile) return
+    e.preventDefault();
+    if (!profile) return;
 
-    setIsSaving(true)
+    setIsSaving(true);
     try {
-      const formData = new FormData()
-      formData.append("full_name", profile.full_name)
-      if (profile.phone) formData.append("phone", profile.phone)
-      if (profile.address) formData.append("address", profile.address)
+      const formData = new FormData();
+      formData.append("full_name", profile.full_name);
+      if (profile.phone) formData.append("phone", profile.phone);
+      if (profile.address) formData.append("address", profile.address);
 
       const response = await apiClient.put("/user/profile", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
-      })
+      });
 
       if (response.data.success && response.data.data) {
-        const updatedProfile = response.data.data
-        updateUser(updatedProfile)
-        setProfile(updatedProfile)
+        const updatedProfile = response.data.data;
+        updateUser(updatedProfile);
+        setProfile(updatedProfile);
         if (updatedProfile.avatar_url) {
-          setAvatarPreview(updatedProfile.avatar_url)
+          setAvatarPreview(updatedProfile.avatar_url);
         }
-        toast.success("Cập nhật profile thành công!")
+        toast.success("Cập nhật profile thành công!");
       }
     } catch (error: any) {
-      console.error("Failed to update profile:", error)
-      toast.error(error?.response?.data?.message || "Không thể cập nhật profile")
+      console.error("Failed to update profile:", error);
+      toast.error(
+        error?.response?.data?.message || "Không thể cập nhật profile"
+      );
     } finally {
-      setIsSaving(false)
+      setIsSaving(false);
     }
-  }
+  };
 
-  if (!isHydrated || !isAuthenticated || isLoading || !profile || user?.role === "admin") {
+  if (
+    !isHydrated ||
+    !isAuthenticated ||
+    isLoading ||
+    !profile ||
+    user?.role === "admin"
+  ) {
     return (
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <div className="flex items-center justify-center py-12">
           <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent"></div>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -281,7 +299,7 @@ export default function ProfilePage() {
                 <Button
                   type="submit"
                   disabled={isSaving}
-                  className="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800"
+                  className="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white"
                 >
                   {isSaving ? (
                     <>
@@ -306,5 +324,5 @@ export default function ProfilePage() {
         </Card>
       </div>
     </div>
-  )
+  );
 }

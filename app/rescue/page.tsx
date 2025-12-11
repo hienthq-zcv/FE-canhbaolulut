@@ -163,15 +163,15 @@ export default function RescueContent() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1 min-h-0 overflow-hidden">
         {/* Cột trái: Danh sách SOS */}
-        <Card className="lg:col-span-1 flex flex-col h-full overflow-hidden border-red-200 dark:border-red-800 shadow-lg bg-white dark:bg-gray-950">
+        <Card className="lg:col-span-1 flex flex-col h-full overflow-hidden border-red-200 dark:border-red-800 shadow-lg bg-card">
           <CardHeader className="bg-red-50 dark:bg-red-950/30 py-4 border-b shrink-0">
             <CardTitle className="text-lg text-red-600 dark:text-red-400">
               Danh sách SOS ({sosRequests.length})
             </CardTitle>
           </CardHeader>
-          <CardContent className="flex-1 overflow-y-auto p-4 space-y-4 bg-white dark:bg-gray-900">
+          <CardContent className="flex-1 overflow-y-auto p-4 space-y-4 bg-card">
             {sosRequests.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-full text-muted-foreground py-8 bg-white">
+              <div className="flex flex-col items-center justify-center h-full text-muted-foreground py-8 bg-background">
                 <CheckCircle className="h-12 w-12 mb-2 text-green-500 opacity-50" />
                 <p>Hiện không có yêu cầu cứu trợ nào.</p>
               </div>
@@ -179,7 +179,7 @@ export default function RescueContent() {
               sosRequests.map((sos) => (
                 <div
                   key={sos.id}
-                  className={`p-4 rounded-lg border shadow-sm transition-all bg-white dark:bg-gray-800 ${
+                  className={`p-4 rounded-lg border shadow-sm transition-all bg-background ${
                     sos.status === "pending"
                       ? "border-l-4 border-l-red-500 border-gray-200 dark:border-red-800"
                       : sos.status === "processing"
@@ -189,7 +189,7 @@ export default function RescueContent() {
                 >
                   <div className="flex justify-between items-start mb-2">
                     {/* Xử lý hiển thị tên trong danh sách */}
-                    <h3 className="font-bold text-base text-gray-100">
+                    <h3 className="font-bold text-base text-foreground">
                       {sos.user_name === "Người dùng (Demo)"
                         ? "Người dân"
                         : sos.user_name}
@@ -211,7 +211,7 @@ export default function RescueContent() {
                         : "Hoàn thành"}
                     </Badge>
                   </div>
-                  <div className="text-sm space-y-1 mb-3 text-gray-900 dark:text-gray-300">
+                  <div className="text-sm space-y-1 mb-3 text-foreground">
                     <div className="flex items-center gap-2">
                       <Clock size={14} />{" "}
                       {format(new Date(sos.created_at), "HH:mm dd/MM/yyyy")}
@@ -284,18 +284,18 @@ export default function RescueContent() {
 
           {/* Chú thích màu sắc */}
           <div className="absolute bottom-4 right-4 bg-white/95 dark:bg-black/90 p-3 rounded-lg shadow-xl text-xs z-[1000] border border-gray-200 dark:border-gray-700">
-            <div className="font-bold mb-2 text-black dark:text-gray-100">
+            <div className="font-bold mb-2 text-foreground">
               Chú thích trạng thái:
             </div>
-            <div className="flex items-center gap-2 mb-1 text-black dark:text-gray-300">
+            <div className="flex items-center gap-2 mb-1 text-muted-foreground">
               <span className="w-3 h-3 rounded-full bg-red-500 block animate-pulse"></span>{" "}
               Khẩn cấp (Chờ)
             </div>
-            <div className="flex items-center gap-2 mb-1 text-black dark:text-gray-300">
+            <div className="flex items-center gap-2 mb-1 text-muted-foreground">
               <span className="w-3 h-3 rounded-full bg-yellow-500 block"></span>{" "}
               Đang xử lý
             </div>
-            <div className="flex items-center gap-2 text-black dark:text-gray-300">
+            <div className="flex items-center gap-2 text-muted-foreground">
               <span className="w-3 h-3 rounded-full bg-blue-500 block"></span>{" "}
               Đã hoàn thành
             </div>

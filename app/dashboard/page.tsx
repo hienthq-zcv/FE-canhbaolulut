@@ -275,7 +275,11 @@ export default function DashboardPage() {
                   <CardHeader>
                     <div className="flex justify-between items-start">
                       <CardTitle className="text-base">{alert.title}</CardTitle>
-                      <Badge className={ALERT_LEVELS[alert.level].bgColor}>
+                      <Badge
+                        className={`${ALERT_LEVELS[alert.level].bgColor} ${
+                          ALERT_LEVELS[alert.level].textColor
+                        }`}
+                      >
                         {ALERT_LEVELS[alert.level].label}
                       </Badge>
                     </div>

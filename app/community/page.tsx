@@ -552,7 +552,7 @@ export default function CommunityPage() {
                 <div className="px-4 py-2 flex items-center justify-between text-muted-foreground text-sm border-b border-border">
                   <div className="flex items-center gap-1">
                     {isLiked && (
-                      <div className="p-1 bg-destructive rounded-full">
+                      <div className="p-1 bg-red-500 rounded-full">
                         <svg
                           className="w-2 h-2 text-white dark:text-background"
                           fill="currentColor"

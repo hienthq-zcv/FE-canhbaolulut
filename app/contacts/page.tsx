@@ -100,7 +100,7 @@ export default function ContactsPage() {
           </p>
         </div>
         <Link href="/contacts/new">
-          <Button className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800">
+          <Button className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white">
             <Plus className="mr-2 h-4 w-4" />
             Thêm liên hệ
           </Button>

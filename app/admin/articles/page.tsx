@@ -127,7 +127,7 @@ export default function AdminArticlesPage() {
                       size="sm"
                       onClick={() => handleDeleteClick(article.id)}
                       disabled={deletingId === article.id}
-                      className="bg-red-600 hover:bg-red-700 text-white flex-1 sm:flex-initial"
+                      className="bg-red-500 text-destructive-foreground hover:bg-red-500/90 flex-1 sm:flex-initial"
                     >
                       <Trash2 className="h-4 w-4 mr-1" />
                       <span className="hidden sm:inline">{deletingId === article.id ? "Đang xóa..." : "Xóa"}</span>

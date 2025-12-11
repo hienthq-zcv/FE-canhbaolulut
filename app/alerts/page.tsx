@@ -1,52 +1,64 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
-import { useAuthStore } from "@/store/auth-store"
-import { useRequireAuth } from "@/hooks/use-require-auth"
-import { useAlertStore } from "@/store/alert-store"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
-import { ALERT_LEVELS } from "@/lib/constants"
-import { MapPin, Clock, AlertTriangle, Search, Filter } from "lucide-react"
-import { format } from "date-fns"
-import Link from "next/link"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/store/auth-store";
+import { useRequireAuth } from "@/hooks/use-require-auth";
+import { useAlertStore } from "@/store/alert-store";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { ALERT_LEVELS } from "@/lib/constants";
+import { MapPin, Clock, AlertTriangle, Search, Filter } from "lucide-react";
+import { format } from "date-fns";
+import Link from "next/link";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function AlertsPage() {
-  const router = useRouter()
-  const { isAuthenticated, isHydrated, user } = useRequireAuth()
-  const { alerts, fetchAlerts, isLoading } = useAlertStore()
-  const [searchTerm, setSearchTerm] = useState("")
-  const [filterLevel, setFilterLevel] = useState<string>("all")
+  const router = useRouter();
+  const { isAuthenticated, isHydrated, user } = useRequireAuth();
+  const { alerts, fetchAlerts, isLoading } = useAlertStore();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterLevel, setFilterLevel] = useState<string>("all");
 
   useEffect(() => {
     // Đợi hydration xong trước khi check auth
-    if (!isHydrated) return
+    if (!isHydrated) return;
 
     // Redirect admin to admin area
     if (user?.role === "admin") {
-      router.push("/admin")
-      return
+      router.push("/admin");
+      return;
     }
 
     if (isAuthenticated) {
-      fetchAlerts()
+      fetchAlerts();
     }
-  }, [isHydrated, isAuthenticated, user, router, fetchAlerts])
+  }, [isHydrated, isAuthenticated, user, router, fetchAlerts]);
 
   const filteredAlerts = alerts.filter((alert) => {
     const matchesSearch =
       alert.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       alert.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      alert.location?.name.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesLevel = filterLevel === "all" || alert.level === filterLevel
-    return matchesSearch && matchesLevel
-  })
+      alert.location?.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesLevel = filterLevel === "all" || alert.level === filterLevel;
+    return matchesSearch && matchesLevel;
+  });
 
   if (!isHydrated || !isAuthenticated || user?.role === "admin") {
-    return null
+    return null;
   }
 
   return (
@@ -95,7 +107,9 @@ export default function AlertsPage() {
         <Card className="border-2 border-dashed">
           <CardContent className="py-12 text-center">
             <AlertTriangle className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
-            <p className="mb-2 text-lg font-semibold">Không tìm thấy cảnh báo</p>
+            <p className="mb-2 text-lg font-semibold">
+              Không tìm thấy cảnh báo
+            </p>
             <p className="text-muted-foreground">
               {searchTerm || filterLevel !== "all"
                 ? "Thử thay đổi bộ lọc hoặc từ khóa tìm kiếm"
@@ -106,7 +120,7 @@ export default function AlertsPage() {
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {filteredAlerts.map((alert) => {
-            const levelConfig = ALERT_LEVELS[alert.level]
+            const levelConfig = ALERT_LEVELS[alert.level];
             return (
               <Link key={alert.id} href={`/alerts/${alert.id}`}>
                 <Card className="card-hover border-2 transition-all duration-300">
@@ -122,11 +136,15 @@ export default function AlertsPage() {
                           {alert.location && (
                             <div className="flex items-center gap-1 text-sm text-muted-foreground">
                               <MapPin className="h-4 w-4" />
-                              <span className="truncate max-w-[150px]">{alert.location.name}</span>
+                              <span className="truncate max-w-[150px]">
+                                {alert.location.name}
+                              </span>
                             </div>
                           )}
                         </div>
-                        <CardTitle className="mb-2 line-clamp-2">{alert.title}</CardTitle>
+                        <CardTitle className="mb-2 line-clamp-2">
+                          {alert.title}
+                        </CardTitle>
                         <CardDescription className="line-clamp-3">
                           {alert.description}
                         </CardDescription>
@@ -140,16 +158,18 @@ export default function AlertsPage() {
                         {format(new Date(alert.created_at), "dd/MM/yyyy HH:mm")}
                       </div>
                       {alert.water_level && (
-                        <span className="hidden sm:inline">💧 {alert.water_level}m</span>
+                        <span className="hidden sm:inline">
+                          💧 {alert.water_level}m
+                        </span>
                       )}
                     </div>
                   </CardContent>
                 </Card>
               </Link>
-            )
+            );
           })}
         </div>
       )}
     </div>
-  )
+  );
 }
