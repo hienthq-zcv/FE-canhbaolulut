@@ -18,7 +18,7 @@ import {
   PlayCircle,
   Loader2,
 } from "lucide-react";
-import { format } from "date-fns";
+import { formatDate } from "@/lib/utils";
 import { useRequireAuth } from "@/hooks/use-require-auth";
 import apiClient from "@/lib/api-client";
 
@@ -214,7 +214,7 @@ export default function RescueContent() {
                   <div className="text-sm space-y-1 mb-3 text-foreground">
                     <div className="flex items-center gap-2">
                       <Clock size={14} />{" "}
-                      {format(new Date(sos.created_at), "HH:mm dd/MM/yyyy")}
+                      {formatDate(sos.created_at, "HH:mm dd/MM/yyyy")}
                     </div>
                     <div className="flex items-center gap-2">
                       <Phone size={14} /> {sos.phone || "Không có SĐT"}

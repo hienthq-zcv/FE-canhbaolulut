@@ -26,7 +26,7 @@ import {
   Siren,
   Loader2,
 } from "lucide-react";
-import { format } from "date-fns";
+import { formatDate } from "@/lib/utils";
 import Link from "next/link";
 import { FloodMap } from "@/components/map/flood-map";
 
@@ -287,7 +287,7 @@ export default function DashboardPage() {
                   <CardContent>
                     <div className="text-sm text-muted-foreground flex items-center gap-2">
                       <Clock className="h-4 w-4" />{" "}
-                      {format(new Date(alert.created_at), "dd/MM/yyyy HH:mm")}
+                      {formatDate(alert.created_at, "dd/MM/yyyy HH:mm")}
                     </div>
                   </CardContent>
                 </Card>

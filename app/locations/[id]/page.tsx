@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { ALERT_LEVELS } from "@/lib/constants"
 import { MapPin, ArrowLeft, Plus, X, Clock, AlertTriangle, Check } from "lucide-react"
-import { format } from "date-fns"
+import { formatDate } from "@/lib/utils"
 import { FloodMap } from "@/components/map/flood-map"
 import Link from "next/link"
 
@@ -273,7 +273,7 @@ export default function LocationDetailPage() {
                                 </p>
                                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
                                   <Clock className="h-3 w-3" />
-                                  {format(new Date(alert.created_at), "dd/MM/yyyy HH:mm")}
+                                  {formatDate(alert.created_at, "dd/MM/yyyy HH:mm")}
                                 </div>
                               </div>
                             </div>

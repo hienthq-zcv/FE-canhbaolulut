@@ -16,7 +16,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Bell, Check, Trash2 } from "lucide-react";
-import { format } from "date-fns";
+import { formatDate } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useState } from "react";
@@ -153,7 +153,7 @@ export default function NotificationsPage() {
               <CardContent>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">
-                    {format(new Date(notification.sent_at), "dd/MM/yyyy HH:mm")}
+                    {formatDate(notification.sent_at, "dd/MM/yyyy HH:mm")}
                   </span>
                   <div className="flex gap-2">
                     {!notification.is_read && (

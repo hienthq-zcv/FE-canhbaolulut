@@ -15,7 +15,7 @@ import {
   RefreshCw,
   Users,
 } from "lucide-react";
-import { format } from "date-fns";
+import { formatDate } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
@@ -109,14 +109,6 @@ export default function AdminCommunityPage() {
       setDeletingId(null);
       setDeleteDialogOpen(false);
       setSelectedPostId(null);
-    }
-  };
-
-  const formatDate = (dateString: string) => {
-    try {
-      return format(new Date(dateString), "HH:mm dd/MM/yyyy");
-    } catch {
-      return dateString;
     }
   };
 

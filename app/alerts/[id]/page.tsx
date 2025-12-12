@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button"
 import { ALERT_LEVELS } from "@/lib/constants"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { AlertTriangle, MapPin, Clock, Droplet, CloudRain, Wind, Thermometer, Gauge, Phone, Home, ArrowLeft } from "lucide-react"
-import { format } from "date-fns"
+import { formatDate } from "@/lib/utils"
 import { Alert as AlertType } from "@/lib/types"
 import { FloodMap } from "@/components/map/flood-map"
 
@@ -70,7 +70,7 @@ export default function AlertDetailPage() {
         <div className="flex items-center gap-4 text-muted-foreground">
           <div className="flex items-center gap-1">
             <Clock className="h-4 w-4" />
-            {format(new Date(currentAlert.created_at), "dd/MM/yyyy HH:mm")}
+            {formatDate(currentAlert.created_at, "dd/MM/yyyy HH:mm")}
           </div>
           {currentAlert.is_active && (
             <Badge variant="default" className="bg-green-500">Đang hoạt động</Badge>

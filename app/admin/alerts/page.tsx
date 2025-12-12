@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { AlertTriangle, Plus, Trash2, Edit } from "lucide-react"
 import { ALERT_LEVELS } from "@/lib/constants"
-import { format } from "date-fns"
+import { formatDate } from "@/lib/utils"
 import Link from "next/link"
 import { ConfirmDialog } from "@/components/ui/confirm-dialog"
 import { toast } from "@/hooks/use-toast"
@@ -107,7 +107,7 @@ export default function AdminAlertsPage() {
                 <CardContent>
                   <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                     <span className="text-xs sm:text-sm text-muted-foreground">
-                      {format(new Date(alert.created_at), "dd/MM/yyyy HH:mm")}
+                      {formatDate(alert.created_at, "dd/MM/yyyy HH:mm")}
                     </span>
                     <div className="flex gap-2 w-full sm:w-auto">
                       <Link href={`/admin/alerts/${alert.id}/edit`} className="flex-1 sm:flex-initial">

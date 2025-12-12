@@ -16,7 +16,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { ALERT_LEVELS } from "@/lib/constants";
 import { MapPin, Clock, AlertTriangle, Search, Filter } from "lucide-react";
-import { format } from "date-fns";
+import { formatDate } from "@/lib/utils";
 import Link from "next/link";
 import {
   Select,
@@ -155,7 +155,7 @@ export default function AlertsPage() {
                     <div className="flex items-center justify-between text-sm text-muted-foreground">
                       <div className="flex items-center gap-1">
                         <Clock className="h-4 w-4" />
-                        {format(new Date(alert.created_at), "dd/MM/yyyy HH:mm")}
+                        {formatDate(alert.created_at, "dd/MM/yyyy HH:mm")}
                       </div>
                       {alert.water_level && (
                         <span className="hidden sm:inline">

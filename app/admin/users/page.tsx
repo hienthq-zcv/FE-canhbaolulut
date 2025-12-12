@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Users, Trash2, Power, Eye, X } from "lucide-react"
-import { format } from "date-fns"
+import { formatDate } from "@/lib/utils"
 import apiClient from "@/lib/api-client"
 import { User } from "@/lib/types"
 import { ConfirmDialog } from "@/components/ui/confirm-dialog"
@@ -136,7 +136,7 @@ export default function AdminUsersPage() {
                         </Badge>
                       </td>
                       <td className="p-2 sm:p-4 text-xs sm:text-sm text-muted-foreground hidden lg:table-cell">
-                        {format(new Date(user.created_at), "dd/MM/yyyy")}
+                        {formatDate(user.created_at, "dd/MM/yyyy")}
                       </td>
                       <td className="p-2 sm:p-4">
                         <div className="flex gap-1 sm:gap-2">
@@ -263,11 +263,11 @@ export default function AdminUsersPage() {
                 </div>
                 <div>
                   <label className="text-sm font-medium text-muted-foreground">Ngày tạo</label>
-                  <p className="text-lg">{format(new Date(selectedUser.created_at), "dd/MM/yyyy HH:mm")}</p>
+                  <p className="text-lg">{formatDate(selectedUser.created_at, "dd/MM/yyyy HH:mm")}</p>
                 </div>
                 <div>
                   <label className="text-sm font-medium text-muted-foreground">Cập nhật lần cuối</label>
-                  <p className="text-lg">{format(new Date(selectedUser.updated_at), "dd/MM/yyyy HH:mm")}</p>
+                  <p className="text-lg">{formatDate(selectedUser.updated_at, "dd/MM/yyyy HH:mm")}</p>
                 </div>
               </div>
             </div>
